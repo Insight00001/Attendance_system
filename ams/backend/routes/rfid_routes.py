@@ -141,12 +141,12 @@ def rfid_tap():
     now = datetime.now(timezone.utc)
 
     if action == "clock_in":
-        shift_start_dt = datetime.combine(
-            today, employee.shift_start
-        ).replace(tzinfo=timezone.utc)
+        # Compare lateness in LOCAL time — shift_start is local wall-clock
+        local_now      = datetime.now()
+        shift_start_dt = datetime.combine(today, employee.shift_start)
         grace_end  = shift_start_dt + timedelta(minutes=employee.late_threshold)
-        is_late    = now > grace_end
-        late_mins  = max(0, int((now - grace_end).total_seconds() / 60)) if is_late else 0
+        is_late    = local_now > grace_end
+        late_mins  = max(0, int((local_now - grace_end).total_seconds() / 60)) if is_late else 0
 
         if today_log:
             today_log.clock_in        = now

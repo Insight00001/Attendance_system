@@ -1,0 +1,19 @@
+# ── Python / backend ──────────────────────────────────────────
+backend/venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/.env
+backend/logs/
+backend/uploads/
+*.pyc
+
+# ── Flutter build output ──────────────────────────────────────
+flutter_app/build/
+flutter_app/.dart_tool/
+flutter_app/flutter/
+
+# ── OS / editor ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

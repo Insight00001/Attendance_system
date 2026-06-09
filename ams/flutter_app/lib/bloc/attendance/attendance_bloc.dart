@@ -15,6 +15,12 @@ class AttendanceLoadTrend extends AttendanceEvent {
   AttendanceLoadTrend({this.days = 30});
 }
 
+class AttendanceLoadLateSummary extends AttendanceEvent {
+  final int year;
+  final int month;
+  AttendanceLoadLateSummary({required this.year, required this.month});
+}
+
 class AttendanceClockInFace extends AttendanceEvent {
   final String imageB64;
   final List<String> livenessFrames;
@@ -50,6 +56,14 @@ class AttendanceTodayLoaded extends AttendanceState {
 class AttendanceTrendLoaded extends AttendanceState {
   final List<Map<String, dynamic>> trend;
   AttendanceTrendLoaded(this.trend);
+}
+
+class AttendanceLateSummaryLoaded extends AttendanceState {
+  final List<Map<String, dynamic>> summary;
+  final int year;
+  final int month;
+  AttendanceLateSummaryLoaded(this.summary,
+      {required this.year, required this.month});
 }
 
 class AttendanceLogsLoaded extends AttendanceState {
@@ -88,6 +102,7 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     on<AttendanceLoadToday>(_onLoadToday);
     on<AttendanceLoadSummary>(_onLoadSummary);
     on<AttendanceLoadTrend>(_onLoadTrend);
+    on<AttendanceLoadLateSummary>(_onLoadLateSummary);
     on<AttendanceClockInFace>(_onClockIn);
     on<AttendanceClockOutFace>(_onClockOut);
     on<AttendanceLoadLogs>(_onLoadLogs);
@@ -127,6 +142,18 @@ Future<void> _onLoadTrend(
     emit(AttendanceTrendLoaded([]));
   }
 }
+  Future<void> _onLoadLateSummary(
+      AttendanceLoadLateSummary e, Emitter<AttendanceState> emit) async {
+    // No loading state — keeps other analytics sections intact
+    try {
+      final summary =
+          await _service.getMonthlyLateSummary(year: e.year, month: e.month);
+      emit(AttendanceLateSummaryLoaded(summary, year: e.year, month: e.month));
+    } catch (err) {
+      emit(AttendanceLateSummaryLoaded(const [], year: e.year, month: e.month));
+    }
+  }
+
   Future<void> _onClockIn(
       AttendanceClockInFace e, Emitter<AttendanceState> emit) async {
     emit(AttendanceLoading());

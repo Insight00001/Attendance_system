@@ -1,0 +1,64 @@
+# ════════════════════════════════════════════════════════════
+# requirements-render.txt — for Render (Linux, free tier, 512 MB)
+#
+# Differences from requirements.txt:
+#   - NO face-recognition / dlib / opencv  (won't build in 512 MB;
+#     face clock-in stays on the local/kiosk machine)
+#   - NO python-magic-bin                  (Windows-only package)
+#   - psycopg2-binary kept                 (works with Supabase)
+#   - APScheduler added                    (leave due-notifications)
+# ════════════════════════════════════════════════════════════
+
+# ─── Web Framework ───────────────────────────────────────────
+Flask==3.0.0
+Flask-CORS==4.0.0
+Flask-SocketIO==5.3.6
+eventlet==0.35.1
+
+# ─── Database ────────────────────────────────────────────────
+psycopg2-binary==2.9.9
+SQLAlchemy==2.0.23
+Flask-SQLAlchemy==3.1.1
+alembic==1.13.0
+
+# ─── Authentication ──────────────────────────────────────────
+PyJWT==2.8.0
+bcrypt==4.1.2
+cryptography==41.0.7
+
+# ─── Validation ──────────────────────────────────────────────
+marshmallow==3.20.1
+Flask-Marshmallow==1.0.0
+email-validator==2.1.0
+
+# ─── Rate Limiting ───────────────────────────────────────────
+Flask-Limiter==3.5.0
+
+# ─── Imaging (Pillow only — no dlib/opencv) ──────────────────
+numpy==1.26.2
+Pillow==10.1.0
+
+# ─── File Handling ───────────────────────────────────────────
+werkzeug==3.0.1
+
+# ─── Email ───────────────────────────────────────────────────
+Flask-Mail==0.9.1
+
+# ─── Export ──────────────────────────────────────────────────
+reportlab==4.0.8
+openpyxl==3.1.2
+
+# ─── Scheduler ───────────────────────────────────────────────
+APScheduler==3.10.4
+
+# ─── Utilities ───────────────────────────────────────────────
+python-dotenv==1.0.0
+python-dateutil==2.8.2
+pytz==2023.3.post1
+shortuuid==1.0.11
+
+# ─── Logging ─────────────────────────────────────────────────
+structlog==23.2.0
+
+# ─── Production ──────────────────────────────────────────────
+gunicorn==21.2.0

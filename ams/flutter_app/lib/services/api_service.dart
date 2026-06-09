@@ -30,6 +30,13 @@ class ApiService {
   Future<Response> get(String path, {Map<String, dynamic>? params}) =>
       _dio.get(path, queryParameters: params);
 
+  /// GET that returns raw bytes (file downloads).
+  Future<Response<List<int>>> getBytes(String path,
+          {Map<String, dynamic>? params}) =>
+      _dio.get<List<int>>(path,
+          queryParameters: params,
+          options: Options(responseType: ResponseType.bytes));
+
   Future<Response> post(String path, {dynamic data, Map<String, dynamic>? params}) =>
       _dio.post(path, data: data, queryParameters: params);
 

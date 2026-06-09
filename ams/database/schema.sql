@@ -405,3 +405,6 @@ ADD CONSTRAINT employees_created_by_fkey
 FOREIGN KEY (created_by) 
 REFERENCES users(id) 
 ON DELETE SET NULL;
+
+UPDATE attendance_logs SET status = 'late'
+WHERE is_late = TRUE AND status = 'present';

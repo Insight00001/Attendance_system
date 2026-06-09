@@ -91,11 +91,14 @@ class AttendanceService:
         snapshot_path = FaceRecognitionService.save_snapshot(image_bytes, "clock_in")
 
         # ── Compute lateness ─────────────────────────────
+        # Store timestamps in UTC, but compare lateness in LOCAL time —
+        # shift_start is a local wall-clock time (e.g. 09:00), not UTC.
         now = datetime.now(timezone.utc)
-        shift_start_dt = datetime.combine(today, employee.shift_start).replace(tzinfo=timezone.utc)
+        local_now = datetime.now()
+        shift_start_dt = datetime.combine(today, employee.shift_start)
         grace_end = shift_start_dt + timedelta(minutes=employee.late_threshold)
-        is_late = now > grace_end
-        late_minutes = max(0, int((now - grace_end).total_seconds() / 60)) if is_late else 0
+        is_late = local_now > grace_end
+        late_minutes = max(0, int((local_now - grace_end).total_seconds() / 60)) if is_late else 0
 
         # ── Create or update attendance log ───────────────
         if existing:
@@ -217,15 +220,18 @@ class AttendanceService:
         if existing and existing.clock_in:
             return None, "Employee already has a clock-in record today"
 
+        # Compare lateness in LOCAL time — shift_start is local wall-clock
         now = datetime.now(timezone.utc)
-        shift_start_dt = datetime.combine(today, employee.shift_start).replace(tzinfo=timezone.utc)
+        local_now = datetime.now()
+        shift_start_dt = datetime.combine(today, employee.shift_start)
         grace_end = shift_start_dt + timedelta(minutes=employee.late_threshold)
-        is_late = now > grace_end
-        late_minutes = max(0, int((now - grace_end).total_seconds() / 60)) if is_late else 0
+        is_late = local_now > grace_end
+        late_minutes = max(0, int((local_now - grace_end).total_seconds() / 60)) if is_late else 0
 
         if existing:
             existing.clock_in = now
             existing.clock_in_method = "manual"
+            existing.status = "late" if is_late else "present"
             existing.is_late = is_late
             existing.late_minutes = late_minutes
             existing.notes = notes

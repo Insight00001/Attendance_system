@@ -74,6 +74,34 @@ class AttendanceService {
     return (data['trend'] as List).cast<Map<String, dynamic>>();
   }
 
+  /// All active staff with late counts for a month.
+  /// Returns list of {employee_id, name, department, late_count,
+  /// total_late_minutes, days_present}
+  Future<List<Map<String, dynamic>>> getMonthlyLateSummary({
+    int? year,
+    int? month,
+  }) async {
+    final now = DateTime.now();
+    final resp = await _api.get('/analytics/late-summary', params: {
+      'year': year ?? now.year,
+      'month': month ?? now.month,
+    });
+    final data = resp.data as Map<String, dynamic>;
+    return (data['summary'] as List).cast<Map<String, dynamic>>();
+  }
+
+  /// Download the monthly late summary as a file.
+  /// [format] is 'pdf' or 'xlsx'. Returns raw file bytes.
+  Future<List<int>> exportLateSummary({
+    required int year,
+    required int month,
+    required String format,
+  }) async {
+    final resp = await _api.getBytes('/analytics/late-summary/export',
+        params: {'year': year, 'month': month, 'format': format});
+    return resp.data ?? <int>[];
+  }
+
   Future<List<Map<String, dynamic>>> getDepartmentStats() async {
     final resp = await _api.get('/analytics/department');
     return (resp.data as List).cast<Map<String, dynamic>>();

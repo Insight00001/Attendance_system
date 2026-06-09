@@ -241,7 +241,6 @@ class EmployeeService:
     def save_employee_photo(cls, photo: FileStorage) -> Tuple[Optional[str], Optional[str]]:
         """Validate and save employee photo. Returns (relative_path, error)."""
         from flask import current_app
-        import magic
 
         MAX_SIZE = 5 * 1024 * 1024  # 5 MB
         photo.seek(0, 2)
@@ -251,10 +250,26 @@ class EmployeeService:
         if size > MAX_SIZE:
             return None, "Photo must be under 5 MB"
 
-        # MIME validation using python-magic (not just extension)
+        # MIME validation using python-magic when available (not just
+        # extension). Falls back to Pillow sniffing if libmagic is missing
+        # (e.g. on cloud hosts without the system library).
         header = photo.read(2048)
         photo.seek(0)
-        mime = magic.from_buffer(header, mime=True)
+        try:
+            import magic
+            mime = magic.from_buffer(header, mime=True)
+        except (ImportError, OSError):
+            import io as _io
+            from PIL import Image as _Image
+            try:
+                img = _Image.open(_io.BytesIO(photo.read()))
+                photo.seek(0)
+                fmt = (img.format or "").lower()
+                mime = {"jpeg": "image/jpeg", "png": "image/png",
+                        "webp": "image/webp"}.get(fmt, f"image/{fmt}")
+            except Exception:
+                photo.seek(0)
+                return None, "Could not read image file"
         if mime not in cls.ALLOWED_PHOTO_MIMES:
             return None, f"Invalid file type: {mime}. Allowed: JPEG, PNG, WebP"
 

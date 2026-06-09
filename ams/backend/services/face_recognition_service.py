@@ -13,8 +13,6 @@ import uuid
 from typing import Optional, Tuple
 
 import numpy as np
-import face_recognition
-import cv2
 from PIL import Image
 from flask import current_app
 
@@ -23,6 +21,27 @@ from config.database import db
 from utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+# face_recognition (dlib) and OpenCV are heavy native libs that are not
+# installed on lightweight cloud deployments (e.g. Render free tier).
+# Import them lazily so the rest of the API still works without them.
+try:
+    import face_recognition
+    import cv2
+    FACE_LIBS_AVAILABLE = True
+except ImportError:
+    face_recognition = None  # type: ignore
+    cv2 = None               # type: ignore
+    FACE_LIBS_AVAILABLE = False
+    logger.warning(
+        "face_recognition/cv2 not installed — face clock-in disabled. "
+        "All other API features remain available."
+    )
+
+_FACE_UNAVAILABLE_MSG = (
+    "Face recognition is not available on this server. "
+    "Use RFID or manual clock-in instead."
+)
 
 
 class FaceRecognitionService:
@@ -58,6 +77,8 @@ class FaceRecognitionService:
         Extract face encoding from image bytes.
         Returns (encoding_array, error_message).
         """
+        if not FACE_LIBS_AVAILABLE:
+            return None, _FACE_UNAVAILABLE_MSG
         try:
             rgb_image = cls.load_image_from_bytes(image_bytes)
 
@@ -134,6 +155,9 @@ class FaceRecognitionService:
         Returns:
             (employee, confidence_percent) or (None, 0.0)
         """
+        if not FACE_LIBS_AVAILABLE:
+            logger.warning("identify_face called but face libs unavailable")
+            return None, 0.0
         query_encoding, error = cls.encode_face(image_bytes)
         if error:
             logger.warning(f"Face identification failed: {error}")
@@ -232,6 +256,9 @@ class FaceRecognitionService:
 
         frame_b64_list: list of base64-encoded JPEG frames (minimum 10 recommended)
         """
+        if not FACE_LIBS_AVAILABLE:
+            logger.warning("Liveness check skipped — face libs unavailable")
+            return False
         required_blinks = current_app.config.get("LIVENESS_BLINK_THRESHOLD", 3)
         blink_count = 0
         consec_frames_below_threshold = 0

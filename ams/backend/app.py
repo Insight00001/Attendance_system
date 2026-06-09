@@ -48,7 +48,9 @@ def create_app(config_class: type = Config) -> Flask:
     socketio.init_app(
         app,
         cors_allowed_origins=app.config["CORS_ORIGINS"],
-        async_mode="threading",
+        # "threading" for local Windows dev; "eventlet" on Render
+        # (set SOCKETIO_ASYNC_MODE=eventlet + gunicorn -k eventlet)
+        async_mode=os.getenv("SOCKETIO_ASYNC_MODE", "threading"),
         logger=True,
         engineio_logger=False,
     )
