@@ -1,8 +1,7 @@
 """
-routes/attendance_routes.py — Attendance endpoints (face clock-in/out, logs, export)
+routes/attendance_routes.py — Attendance endpoints (manual clock-in/out, logs, export)
 """
 
-import base64
 import calendar as _cal
 from datetime import date, timedelta
 from flask import Blueprint, request, jsonify, g, make_response
@@ -17,85 +16,9 @@ from middleware.rate_limiter import limiter
 attendance_bp = Blueprint("attendance", __name__)
 
 
-class FaceClockSchema(Schema):
-    """Payload for face-based clock-in/out."""
-    image_b64       = fields.Str(required=True)        # base64-encoded JPEG
-    liveness_frames = fields.List(fields.Str(), load_default=[])  # base64 frames
-
-
 class ManualClockSchema(Schema):
     employee_id = fields.UUID(required=True)
     notes       = fields.Str(load_default="")
-
-
-# ── Face Clock-In ──────────────────────────────────────────────
-
-@attendance_bp.route("/clock-in", methods=["POST"])
-@limiter.limit("30 per minute")
-def clock_in():
-    """POST /api/v1/attendance/clock-in — face recognition clock-in"""
-    try:
-        data = FaceClockSchema().load(request.json or {})
-    except ValidationError as e:
-        return jsonify({"error": e.messages}), 422
-
-    from services.face_recognition_service import FaceRecognitionService
-    image_bytes = FaceRecognitionService.base64_to_bytes(data["image_b64"])
-
-    result, error = AttendanceService.clock_in_by_face(
-        image_bytes=image_bytes,
-        liveness_frames=data.get("liveness_frames", []),
-    )
-
-    if error:
-        return jsonify({"error": error}), 400
-
-    return jsonify(result), 200
-
-
-# ── Face Clock-Out ─────────────────────────────────────────────
-
-@attendance_bp.route("/clock-out", methods=["POST"])
-@limiter.limit("30 per minute")
-def clock_out():
-    """POST /api/v1/attendance/clock-out"""
-    try:
-        data = FaceClockSchema().load(request.json or {})
-    except ValidationError as e:
-        return jsonify({"error": e.messages}), 422
-
-    from services.face_recognition_service import FaceRecognitionService
-    image_bytes = FaceRecognitionService.base64_to_bytes(data["image_b64"])
-
-    result, error = AttendanceService.clock_out_by_face(image_bytes=image_bytes)
-    if error:
-        return jsonify({"error": error}), 400
-
-    return jsonify(result), 200
-
-
-# ── Face Verify (identify only, no logging) ────────────────────
-
-@attendance_bp.route("/face-verify", methods=["POST"])
-def face_verify():
-    """POST /api/v1/attendance/face-verify — identify face without logging"""
-    body = request.json or {}
-    image_b64 = body.get("image_b64", "")
-    if not image_b64:
-        return jsonify({"error": "image_b64 required"}), 400
-
-    from services.face_recognition_service import FaceRecognitionService
-    image_bytes = FaceRecognitionService.base64_to_bytes(image_b64)
-    employee, confidence = FaceRecognitionService.identify_face(image_bytes)
-
-    if not employee:
-        return jsonify({"recognized": False, "confidence": confidence}), 200
-
-    return jsonify({
-        "recognized": True,
-        "confidence": confidence,
-        "employee": employee.to_dict(),
-    }), 200
 
 
 # ── Manual Clock-In (Admin) ────────────────────────────────────
