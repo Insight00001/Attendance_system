@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify, g
 from marshmallow import Schema, fields, validate, ValidationError
 
 from services.employee_service import EmployeeService
-from services.face_recognition_service import FaceRecognitionService
 from middleware.auth_middleware import token_required, admin_required
 from models import Employee, Department, Role
 
@@ -149,17 +148,11 @@ def upload_photo(employee_id):
         return jsonify({"error": err}), 400
 
     employee.photo_url = photo_url
-    photo.seek(0)
-    image_bytes = photo.read()
-    _, enc_err = FaceRecognitionService.save_encoding(str(employee_id), image_bytes)
 
     from config.database import db
     db.session.commit()
 
-    return jsonify({
-        "message": "Photo updated" + ("" if not enc_err else f" (encoding warning: {enc_err})"),
-        "photo_url": photo_url,
-    }), 200
+    return jsonify({"message": "Photo updated", "photo_url": photo_url}), 200
 
 
 # ── Employee attendance history ────────────────────────────────

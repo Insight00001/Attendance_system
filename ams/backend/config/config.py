@@ -53,15 +53,9 @@ class Config:
         os.getenv("ALLOWED_EXTENSIONS", "jpg,jpeg,png,webp").split(",")
     )
 
-    # ── Face Recognition ──────────────────────────────────────
-    FACE_TOLERANCE: float = float(os.getenv("FACE_RECOGNITION_TOLERANCE", 0.5))
-    LIVENESS_BLINK_THRESHOLD: int = int(os.getenv("LIVENESS_BLINK_THRESHOLD", 3))
-    FACE_SNAPSHOT_FOLDER: str = os.getenv("FACE_SNAPSHOT_FOLDER", "uploads/snapshots")
-
     # ── Redis ─────────────────────────────────────────────────
     REDIS_URL: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-    #RATELIMIT_STORAGE_URI: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-    RATELIMIT_STORAGE_URI: str = "memory://"
+    RATELIMIT_STORAGE_URI: str = os.getenv("RATELIMIT_STORAGE_URI", os.getenv("REDIS_URL", "memory://"))
 
 
     # ── Email ─────────────────────────────────────────────────
@@ -91,7 +85,6 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     LOG_LEVEL = "DEBUG"
-    FACE_TOLERANCE = 0.55  # Slightly lenient in dev
 
 
 class TestingConfig(Config):
