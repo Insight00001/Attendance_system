@@ -20,10 +20,14 @@ class AppConfig {
   static const Duration connectTimeout = Duration(seconds: 15);
   static const Duration receiveTimeout = Duration(seconds: 30);
 
+  // Pagination
+  static const int defaultPageSize = 20;
+
+  // Face recognition
+  static const Duration cameraPreviewDelay = Duration(milliseconds: 500);
+  static const int livenessFrameCount = 15; // frames to collect for blink detection
+
   // Shift defaults
   static const String defaultShiftStart = '08:00';
   static const String defaultShiftEnd   = '17:00';
-
-  // Pagination
-  static const int defaultPageSize = 20;
 }

@@ -21,6 +21,7 @@ import '../screens/employee/my_attendance_screen.dart';
 import '../screens/admin/settings_screen.dart';
 import '../screens/admin/rfid_management_screen.dart';
 import '../screens/employee/my_leave_screen.dart';
+import '../screens/attendance/camera_attendance_screen.dart';
 
 class AppRouter {
   static GoRouter createRouter(AuthState authState) {
@@ -45,6 +46,9 @@ class AppRouter {
         GoRoute(
             path: '/forgot-password',
             builder: (_, __) => const ForgotPasswordScreen()),
+        GoRoute(
+            path: '/attendance/camera',
+            builder: (_, __) => const CameraAttendanceScreen()),
 
         // ── Admin Shell ────────────────────────────────────
         ShellRoute(
@@ -125,6 +129,7 @@ class AppRoutes {
   static const employeeDash   = '/employee';
   static const myAttendance   = '/employee/attendance';
   static const myLeave        = '/employee/leave';
+  static const camera         = '/attendance/camera';
 
   static String employeeDetailPath(String id) => '/admin/employees/$id';
   static String employeeEditPath(String id) => '/admin/employees/$id/edit';

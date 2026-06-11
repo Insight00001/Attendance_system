@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y \
     libsm6 \
     libxext6 \
     curl \
-    libmagic1 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

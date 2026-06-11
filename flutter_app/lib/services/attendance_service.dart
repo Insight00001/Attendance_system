@@ -5,6 +5,29 @@ class AttendanceService {
   final ApiService _api;
   AttendanceService(this._api);
 
+  Future<Map<String, dynamic>> clockInByFace({
+    required String imageB64,
+    List<String> livenessFrames = const [],
+  }) async {
+    final resp = await _api.post('/attendance/clock-in', data: {
+      'image_b64': imageB64,
+      'liveness_frames': livenessFrames,
+    });
+    return resp.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> clockOutByFace(String imageB64) async {
+    final resp = await _api.post('/attendance/clock-out',
+        data: {'image_b64': imageB64});
+    return resp.data as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> verifyFace(String imageB64) async {
+    final resp = await _api
+        .post('/attendance/face-verify', data: {'image_b64': imageB64});
+    return resp.data as Map<String, dynamic>;
+  }
+
   Future<List<AttendanceLog>> getTodayAttendance() async {
     final resp = await _api.get('/attendance/today');
     final logs = (resp.data['logs'] as List);

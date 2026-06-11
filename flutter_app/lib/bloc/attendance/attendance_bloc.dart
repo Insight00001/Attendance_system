@@ -21,6 +21,17 @@ class AttendanceLoadLateSummary extends AttendanceEvent {
   AttendanceLoadLateSummary({required this.year, required this.month});
 }
 
+class AttendanceClockInFace extends AttendanceEvent {
+  final String imageB64;
+  final List<String> livenessFrames;
+  AttendanceClockInFace(this.imageB64, {this.livenessFrames = const []});
+}
+
+class AttendanceClockOutFace extends AttendanceEvent {
+  final String imageB64;
+  AttendanceClockOutFace(this.imageB64);
+}
+
 class AttendanceLoadLogs extends AttendanceEvent {
   final String? startDate;
   final String? endDate;
@@ -60,6 +71,24 @@ class AttendanceLogsLoaded extends AttendanceState {
   AttendanceLogsLoaded(this.result);
 }
 
+class AttendanceClockSuccess extends AttendanceState {
+  final String message;
+  final bool isLate;
+  final int? lateMinutes;
+  final int? workingMinutes;
+  AttendanceClockSuccess({
+    required this.message,
+    this.isLate = false,
+    this.lateMinutes,
+    this.workingMinutes,
+  });
+}
+
+class AttendanceClockError extends AttendanceState {
+  final String message;
+  AttendanceClockError(this.message);
+}
+
 class AttendanceError extends AttendanceState {
   final String message;
   AttendanceError(this.message);
@@ -74,6 +103,8 @@ class AttendanceBloc extends Bloc<AttendanceEvent, AttendanceState> {
     on<AttendanceLoadSummary>(_onLoadSummary);
     on<AttendanceLoadTrend>(_onLoadTrend);
     on<AttendanceLoadLateSummary>(_onLoadLateSummary);
+    on<AttendanceClockInFace>(_onClockIn);
+    on<AttendanceClockOutFace>(_onClockOut);
     on<AttendanceLoadLogs>(_onLoadLogs);
   }
 
@@ -120,6 +151,39 @@ Future<void> _onLoadTrend(
       emit(AttendanceLateSummaryLoaded(summary, year: e.year, month: e.month));
     } catch (err) {
       emit(AttendanceLateSummaryLoaded(const [], year: e.year, month: e.month));
+    }
+  }
+
+  Future<void> _onClockIn(
+      AttendanceClockInFace e, Emitter<AttendanceState> emit) async {
+    emit(AttendanceLoading());
+    try {
+      final result = await _service.clockInByFace(
+        imageB64: e.imageB64,
+        livenessFrames: e.livenessFrames,
+      );
+      emit(AttendanceClockSuccess(
+        message: result['message'] as String? ?? 'Clocked in successfully',
+        isLate: result['is_late'] as bool? ?? false,
+        lateMinutes: result['late_minutes'] as int?,
+      ));
+    } catch (err) {
+      emit(AttendanceClockError(apiErrorMessage(err)));
+    }
+  }
+
+  Future<void> _onClockOut(
+      AttendanceClockOutFace e, Emitter<AttendanceState> emit) async {
+    emit(AttendanceLoading());
+    try {
+      final result = await _service.clockOutByFace(e.imageB64);
+      emit(AttendanceClockSuccess(
+        message:
+            result['message'] as String? ?? 'Clocked out successfully',
+        workingMinutes: result['working_minutes'] as int?,
+      ));
+    } catch (err) {
+      emit(AttendanceClockError(apiErrorMessage(err)));
     }
   }
 

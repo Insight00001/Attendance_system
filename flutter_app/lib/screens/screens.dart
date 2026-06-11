@@ -128,7 +128,7 @@ class _AddEmployeeScreenState extends State<AddEmployeeScreen> {
                       ),
                       const SizedBox(height: 8),
                       const Center(
-                        child: Text('Employee profile photo',
+                        child: Text('Photo is used for face recognition',
                           style: TextStyle(fontSize: 12, color: Color(0xFF94A3B8))),
                       ),
                       const SizedBox(height: 28),
@@ -645,18 +645,27 @@ class EmployeeDashboardScreen extends StatelessWidget {
                 style: AppTextStyles.body.copyWith(color: const Color(0xFF64748B))),
               const SizedBox(height: 32),
 
-              // Attendance info card
+              // Clock in/out card
               Card(
                 color: AppTheme.primaryBlue,
                 child: Padding(
                   padding: const EdgeInsets.all(24),
                   child: Column(children: [
-                    const Icon(Icons.access_time_rounded, color: Colors.white, size: 64),
+                    const Icon(Icons.fingerprint, color: Colors.white, size: 64),
                     const SizedBox(height: 16),
-                    const Text('Attendance', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
+                    const Text('Face Attendance', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 8),
-                    const Text('Your attendance is recorded by your administrator.',
+                    const Text('Tap to clock in or out using your face',
                       style: TextStyle(color: Colors.white70), textAlign: TextAlign.center),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => context.push(AppRoutes.camera),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppTheme.primaryBlue,
+                      ),
+                      child: const Text('Open Camera'),
+                    ),
                   ]),
                 ),
               ),
