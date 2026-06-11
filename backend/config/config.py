@@ -5,9 +5,26 @@ Supports development, testing, and production environments.
 
 import os
 from datetime import timedelta
+from urllib.parse import urlparse, urlencode, parse_qsl, urlunparse
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
+def _clean_db_url(url: str) -> str:
+    """
+    Sanitize DATABASE_URL for SQLAlchemy/psycopg2:
+    - 'postgres://' -> 'postgresql://' (Heroku/Render style)
+    - strip 'pgbouncer' query param (Prisma-only; psycopg2 rejects it)
+    """
+    if url.startswith("postgres://"):
+        url = "postgresql://" + url[len("postgres://"):]
+    parts = urlparse(url)
+    if parts.query:
+        params = [(k, v) for k, v in parse_qsl(parts.query)
+                  if k.lower() != "pgbouncer"]
+        parts = parts._replace(query=urlencode(params))
+    return urlunparse(parts)
 
 
 class Config:
@@ -19,10 +36,10 @@ class Config:
     TESTING: bool = False
 
     # ── Database ──────────────────────────────────────────────
-    SQLALCHEMY_DATABASE_URI: str = os.getenv(
+    SQLALCHEMY_DATABASE_URI: str = _clean_db_url(os.getenv(
         "DATABASE_URL",
         "postgresql://attendease_user:StrongPass%402024@localhost:5432/attendease",
-    )
+    ))
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     SQLALCHEMY_ENGINE_OPTIONS: dict = {
         "pool_size": 10,
