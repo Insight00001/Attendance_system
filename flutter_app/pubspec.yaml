@@ -1,0 +1,70 @@
+name: flutter_app
+description: "AttendEase — Employee Attendance Management System"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter_launcher_icons: ^0.14.4
+  flutter:
+    sdk: flutter
+
+  # ── State Management ──────────────────────────────────────
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.5
+
+  # ── Networking ────────────────────────────────────────────
+  dio: ^5.9.2
+  socket_io_client: ^3.1.4
+
+  # ── Secure Storage ────────────────────────────────────────
+  flutter_secure_storage: ^10.2.0
+
+  # ── Camera ────────────────────────────────────────────────
+  image_picker: ^1.2.1
+
+  # ── Navigation ────────────────────────────────────────────
+  go_router: ^17.0.0
+
+  # ── UI Components ─────────────────────────────────────────
+  fl_chart: 0.67.0            # pinned — v1.x breaks Matrix4 on Windows
+  cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  google_fonts: ^6.3.2
+
+  # ── Icons ─────────────────────────────────────────────────
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter_icons:
+  
+  android: true
+  ios: true
+  image_path: "assets/icon/insight.png"
+
+flutter:
+  uses-material-design: true
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21
+  web:
+    generate: true
+    image_path: "path/to/image.png"
+    background_color: "#hexcode"
+    theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/image/insight.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/image/insight.png"

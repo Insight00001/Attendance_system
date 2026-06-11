@@ -1,0 +1,18 @@
+                                                                          List of databases
+      Name      |  Owner   | Encoding | Locale Provider |          Collate           |           Ctype            | Locale | ICU Rules |      Access privileges       
+----------------+----------+----------+-----------------+----------------------------+----------------------------+--------+-----------+------------------------------
+ attendease     | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =Tc/postgres                +
+                |          |          |                 |                            |                            |        |           | postgres=CTc/postgres       +
+                |          |          |                 |                            |                            |        |           | attendease_user=CTc/postgres
+ hms            | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+ hotel          | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+ hotelsmartlock | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+ postgres       | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+ smartdoorapp   | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+ template0      | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres                 +
+                |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+ template1      | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | =c/postgres                 +
+                |          |          |                 |                            |                            |        |           | postgres=CTc/postgres
+ zicshotel      | postgres | UTF8     | libc            | English_United States.1252 | English_United States.1252 |        |           | 
+(9 rows)
+

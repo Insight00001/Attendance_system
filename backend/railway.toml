@@ -1,0 +1,7 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "gunicorn --bind 0.0.0.0:$PORT --workers 2 --worker-class eventlet app:app"
+healthcheckPath = "/health"
+restartPolicyType = "on_failure"
