@@ -19,6 +19,25 @@ with app.app_context():
 
     db.create_all()
 
+    # leave_requests has no SQLAlchemy model (raw-SQL feature),
+    # so create_all() can't create it. Do it explicitly.
+    from sqlalchemy import text
+    db.session.execute(text("""
+        CREATE TABLE IF NOT EXISTS leave_requests (
+            id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            employee_id UUID NOT NULL REFERENCES employees(id) ON DELETE CASCADE,
+            start_date  DATE NOT NULL,
+            end_date    DATE NOT NULL,
+            reason      TEXT DEFAULT '',
+            leave_type  VARCHAR(20) NOT NULL DEFAULT 'annual',
+            status      VARCHAR(20) NOT NULL DEFAULT 'pending',
+            approved_by UUID REFERENCES users(id),
+            approved_at TIMESTAMPTZ,
+            created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+    """))
+    db.session.commit()
+
     # Seed the initial admin once (skip if already present)
     if os.getenv("SEED_ADMIN", "true").lower() == "true":
         try:
