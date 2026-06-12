@@ -1,11 +1,11 @@
 {
-    "name": "flutter_app",
-    "short_name": "flutter_app",
+    "name": "AttendEase",
+    "short_name": "AttendEase",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#FFFFFF",
     "theme_color": "#FFFFFF",
-    "description": "A new Flutter project.",
+    "description": "AttendEase — Employee Attendance Management System",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
