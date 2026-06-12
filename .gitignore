@@ -12,6 +12,13 @@ flutter_app/build/
 flutter_app/.dart_tool/
 flutter_app/flutter/
 
+# ── Per-customer deployment secrets ───────────────────────────
+deploy/.env
+
+# ── ESP8266 firmware secrets ──────────────────────────────────
+esp8266_rfid_local/secrets.h
+esp8266_rfid/secrets.h
+
 # ── OS / editor ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db

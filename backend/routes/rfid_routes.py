@@ -13,10 +13,15 @@ from utils.logger import get_logger
 rfid_bp = Blueprint("rfid", __name__)
 logger  = get_logger(__name__)
 
-RFID_API_KEY = os.getenv("CAMERA_API_KEY", "yvd1bxmlA9jRRYp2hrvw0QvdoC8AXRJ7ENz5qyrLlDs")
+# Per-customer key — MUST be set in the environment (no default:
+# a shared fallback key would let one customer's reader talk to
+# another customer's server).
+RFID_API_KEY = os.getenv("CAMERA_API_KEY", "")
 
 
 def _verify_key():
+    if not RFID_API_KEY:        # unconfigured server → reject all
+        return False
     key = request.headers.get("X-Camera-Key") or request.args.get("key", "")
     return key == RFID_API_KEY
 
