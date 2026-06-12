@@ -36,6 +36,18 @@ with app.app_context():
             created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
         )
     """))
+    db.session.execute(text("""
+        CREATE TABLE IF NOT EXISTS rfid_cards (
+            id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+            card_uid    VARCHAR(64) NOT NULL UNIQUE,
+            label       VARCHAR(100),
+            is_assigned BOOLEAN NOT NULL DEFAULT FALSE,
+            assigned_to UUID REFERENCES employees(id) ON DELETE SET NULL,
+            first_seen  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            last_seen   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+            tap_count   INTEGER NOT NULL DEFAULT 0
+        )
+    """))
     db.session.commit()
 
     # Seed the initial admin once (skip if already present)
