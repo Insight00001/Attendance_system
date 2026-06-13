@@ -34,6 +34,7 @@ const char* API_KEY       = "YOUR_API_KEY"; // must match CAMERA_API_KEY on the 
 const char* READER_ID     = "main-entrance";
 
 // ── Pins ───────────────────────────────────────────────────────
+
 #define SS_PIN   15   // D8
 #define RST_PIN  0    // D3
 #define LED_PIN  2    // onboard LED (active LOW)

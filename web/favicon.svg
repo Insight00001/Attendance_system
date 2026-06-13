@@ -29,7 +29,13 @@
   <circle cx="256" cy="288" r="68" fill="none" stroke="#1b3660" stroke-width="1.5" stroke-dasharray="4,5"/>
   <circle cx="256" cy="288" r="48" fill="none" stroke="#1b3660" stroke-width="1.5" stroke-dasharray="3,4"/>
 
-  <!-- Hexagon spokes -->
+  <!-- Hexagon spokes (flat-top, radius 70) -->
+  <!-- Top     (256, 218) -->
+  <!-- TR      (256+70*sin60, 288-70*cos60) = (256+60.6, 288-35) = (317, 253) -->
+  <!-- BR      (317, 323) -->
+  <!-- Bottom  (256, 358) -->
+  <!-- BL      (195, 323) -->
+  <!-- TL      (195, 253) -->
   <line x1="256" y1="288" x2="256" y2="218" stroke="#1e4c8a" stroke-width="2"/>
   <line x1="256" y1="288" x2="317" y2="253" stroke="#1e4c8a" stroke-width="2"/>
   <line x1="256" y1="288" x2="317" y2="323" stroke="#1e4c8a" stroke-width="2"/>
