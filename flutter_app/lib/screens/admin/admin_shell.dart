@@ -92,6 +92,7 @@ class _AdminShellState extends State<AdminShell> {
               selectedIndex: _selectedIndex,
               onDestinationSelected: _onNavTap,
               backgroundColor: theme.colorScheme.surface,
+              labelBehavior: NavigationDestinationLabelBehavior.onlyShowSelected,
               destinations: _navItems
                   .map((item) => NavigationDestination(
                         icon: Icon(item.icon),
