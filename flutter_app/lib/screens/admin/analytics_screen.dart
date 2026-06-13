@@ -184,48 +184,54 @@ class _MonthlyLateSummaryState extends State<_MonthlyLateSummary> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Header with month picker ─────────────────────
+            Text('Monthly Late Summary', style: AppTextStyles.heading3),
+            const SizedBox(height: 6),
             Row(
               children: [
-                Expanded(
-                  child: Text('Monthly Late Summary',
-                      style: AppTextStyles.heading3),
-                ),
                 IconButton(
                   icon: const Icon(Icons.chevron_left),
                   tooltip: 'Previous month',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   onPressed: () => _changeMonth(-1),
                 ),
+                const SizedBox(width: 4),
                 Text(
                   '${_monthNames[_month - 1]} $_year',
                   style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
+                const SizedBox(width: 4),
                 IconButton(
                   icon: const Icon(Icons.chevron_right),
                   tooltip: 'Next month',
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                   onPressed: isCurrentMonth ? null : () => _changeMonth(1),
                 ),
-                const SizedBox(width: 8),
+                const Spacer(),
                 if (_exporting)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12),
-                    child: SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 else ...[
                   IconButton(
                     icon: const Icon(Icons.picture_as_pdf_outlined,
                         color: AppTheme.accentRed),
                     tooltip: 'Export as PDF',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     onPressed:
                         _summary.isEmpty ? null : () => _export('pdf'),
                   ),
+                  const SizedBox(width: 8),
                   IconButton(
                     icon: const Icon(Icons.table_view_outlined,
                         color: Colors.green),
                     tooltip: 'Export as Excel',
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
                     onPressed:
                         _summary.isEmpty ? null : () => _export('xlsx'),
                   ),
